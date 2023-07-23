@@ -13,6 +13,7 @@ This tutorial will guide you through using Algolia to create search indexes and 
 To follow along, you’ll need:
 
 * A Contentful account. [Sign up](https://www.contentful.com/sign-up/) if you do not have one.
+* An Algolia account. [Sign up](https://dashboard.algolia.com/users/sign_up) if you do not have one.
 
 * Intermediate knowledge of JavaScript
 * Intermediate knowledge of [Next.js](https://nextjs.org/).
