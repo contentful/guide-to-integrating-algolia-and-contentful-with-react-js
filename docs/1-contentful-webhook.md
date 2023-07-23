@@ -10,3 +10,22 @@ Now, you have to go to the `Settings` section (the cog icon at the bottom of the
 
 Now, in your Contentful space, go to `Settings > Webhooks`. For the sake of simplicity, we'll use the Algolia webhook template that already exists, but you could also create an endpoint with your own needed business logic and use its url as the webhook's url.
 You'll see a section called `Webhook templates` at the right sidebar. Click on the Algolia one (or in the "See all templates" button if you don't see it and search for it) and input the three required fields: your Algolia Application ID, the name of your index and the Admin API Key.
+
+The webhook will be configured with the following:
+
+1. Url (PUT endpoint): https://{app-id}.algolia.net/1/indexes/{index-name}/{ /payload/sys/id }
+2. Triggers with Publish Entry event
+3. Filters: will trigger only with entries in the 'master' environment
+4. Headers:
+   a. X-Algolia-Application-Id: Your application ID
+   b. X-Algolia-API-Key: Your API Key
+5. Use default Contentful payload
+
+<img width="1572" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/63208f2d-877d-4137-b289-bf138dbdf9a3">
+
+
+I'll add another filter rule which will make the indexing to only happen with the `post` content type. We normally don't want all of our entries to be indexes, just the ones we want to show in a listing-like page.
+
+<img width="1552" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/b3df6333-6622-4365-a341-f27c948526cd">
+
+Now, whenever you publish a `post` entry, it will be indexed into the Algolia index! let's create the content type.
