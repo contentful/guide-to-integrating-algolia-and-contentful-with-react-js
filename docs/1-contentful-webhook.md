@@ -1,4 +1,4 @@
-# Setup Contentful webhook connected with Algolia
+# Setup Contentful webhooks connected with Algolia
 
 First of all, we'll need to know our Algolia credentials and having created a search index.
 
@@ -11,20 +11,23 @@ Now, you have to go to the `Settings` section (the cog icon at the bottom of the
 Now, in your Contentful space, go to `Settings > Webhooks`. For the sake of simplicity, we'll use the Algolia webhook template that already exists, but you could also create an endpoint with your own needed business logic and use its url as the webhook's url.
 You'll see a section called `Webhook templates` at the right sidebar. Click on the Algolia one (or in the "See all templates" button if you don't see it and search for it) and input the three required fields: your Algolia Application ID, the name of your index and the Admin API Key.
 
-The webhook will be configured with the following:
+This will create two webhooks. One for the entries indexing and the second one for deleting unpublished entries. Both will be configured with the following:
 
-1. Url (PUT endpoint): https://{app-id}.algolia.net/1/indexes/{index-name}/{ /payload/sys/id }
-2. Triggers with Publish Entry event
+1. Url: https://{app-id}.algolia.net/1/indexes/{index-name}/{ /payload/sys/id }
+2. Events:
+   a. The "index entry webhook" will only trigger with Publish Entry events.
+   b. The "delete unpublished entry" webhook will only trigger with Unpublish Entry events.
 3. Filters: will trigger only with entries in the 'master' environment
 4. Headers:
    a. X-Algolia-Application-Id: Your application ID
    b. X-Algolia-API-Key: Your API Key
 5. Use default Contentful payload
 
-<img width="1572" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/63208f2d-877d-4137-b289-bf138dbdf9a3">
+The Index Entries webhook will look like this:
 
+<img width="1590" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/5522f3ed-bb27-487d-b409-80a49501afd6">
 
-I'll add another filter rule which will make the indexing to only happen with the `post` content type. We normally don't want all of our entries to be indexes, just the ones we want to show in a listing-like page.
+I'll add another filter rule to both webhooks which will make the indexing and deletion to only happen with the `post` content type. We normally don't want all of our entries to be indexed, just the ones we want to show in a listing-like page. We also don't want to trigger the deletion webhook whenever entries from another content type are unpublished.
 
 <img width="1552" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/b3df6333-6622-4365-a341-f27c948526cd">
 
