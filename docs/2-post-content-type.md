@@ -1,6 +1,6 @@
 # Post Content Type and Indexing entries
 
-We'll keep it simple and will not include reference fields, but in a normal scenario, you will likely use them in your model!
+We'll keep it simple and will not include reference entry fields, but in a normal scenario, you will likely use them in your model!
 
 Our content type will have the following fields, being the `Title`, `Publish Date`, and `Authors` the minimal required information in order for the Post to be shown in a listing page:
 
