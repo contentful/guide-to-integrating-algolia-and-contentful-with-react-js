@@ -25,7 +25,7 @@ This will create two webhooks. One for the entries indexing and the second one f
 
 The Index Entries webhook will look like this:
 
-<img width="1572" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/63208f2d-877d-4137-b289-bf138dbdf9a3">
+<img width="1590" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/5522f3ed-bb27-487d-b409-80a49501afd6">
 
 I'll add another filter rule to both webhooks which will make the indexing and deletion to only happen with the `post` content type. We normally don't want all of our entries to be indexed, just the ones we want to show in a listing-like page. We also don't want to trigger the deletion webhook whenever entries from another content type are unpublished.
 
