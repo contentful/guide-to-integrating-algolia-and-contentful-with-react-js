@@ -2,7 +2,7 @@
 
 We'll keep it simple and will not include reference entry fields, but in a normal scenario, you will likely use them in your model!
 
-Our content type will have the following fields, being the `Title`, `Publish Date`, and `Authors` the minimal required information in order for the Post to be shown in a listing page:
+Our content type will have the following fields, being the `Title`, `Publish Date`, and `Authors` the minimal required information in order for the Post to be shown in our listing page:
 
 <img width="1040" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/abfff62c-33b4-4188-9fee-af6d910accc1">
 
