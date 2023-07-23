@@ -28,4 +28,4 @@ I'll add another filter rule which will make the indexing to only happen with th
 
 <img width="1552" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/b3df6333-6622-4365-a341-f27c948526cd">
 
-Now, whenever you publish a `post` entry, it will be indexed into the Algolia index! let's create the content type.
+Now let's create our `Post` content type and index an entry!
