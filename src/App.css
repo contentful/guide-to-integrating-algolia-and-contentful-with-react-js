@@ -1,42 +1,116 @@
-#root {
-  max-width: 1280px;
+* {
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  background-color: rgb(242, 248, 251);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+ul {
+  list-style: none;
+}
+
+.page-title {
+  font-size: 2em;
+  color: rgb(42, 48, 57);
+  line-height: 1.1;
+  margin-bottom: 2rem;
+  letter-spacing: 0.1115em;
+  font-weight: 800;
+}
+
+main {
   margin: 0 auto;
+  max-width: 1280px;
   padding: 2rem;
-  text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.post-cards-grid {
+  display: grid;
+  column-gap: 20px;
+  row-gap: 20px;
+  grid-template-columns: 1fr;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+.filters {
+}
+
+.posts {
+  display: grid;
+  row-gap: 30px;
+}
+
+@media (min-width: 1024px) {
+  .post-cards-grid {
+    grid-template-columns: 25% 75%;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.post-card-link-wrapper {
+  text-decoration: none;
+  transition: all 0.4s ease-in-out;
+  display: block;
 }
 
-.card {
-  padding: 2em;
+.post-card-link-wrapper:hover {
+  transform: translateY(-3px);
+  box-shadow: rgba(0, 0, 0, 0.10) 0px 5px 15px 5px;
 }
 
-.read-the-docs {
-  color: #888;
+.post-card {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 5px;
+}
+
+.post-card-category {
+  display: block;
+  color: rgb(11, 106, 230);
+  font-weight: 600;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  margin-bottom: 10px;
+}
+
+.post-card-title {
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.008em;
+  margin: 0px;
+  padding: 0px;
+  color: rgb(42, 48, 57);
+  display: block;
+  font-size: 20px;
+  padding-bottom: 20px;
+}
+
+.post-card-footnote {
+  line-height: 1.6;
+  font-weight: 400;
+  color: rgb(42, 48, 57);
+  font-size: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  height: auto;
+  max-height: 1.6em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.post-card-footnote span {
+  color: rgb(219, 227, 231);
+  font-weight: 400;
+  line-height: 1.6;
 }

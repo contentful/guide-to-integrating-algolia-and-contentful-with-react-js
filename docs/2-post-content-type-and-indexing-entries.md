@@ -6,7 +6,7 @@ Our content type will have the following fields, being the `Title`, `Publish Dat
 
 <img width="1030" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/be48557d-3853-4365-bb42-47d8aca230a4">
 
-Now, whenever you publish a `post` entry, its data will be synced into the Algolia index! Let's take, for example, the following entry:
+Now, whenever you publish a `post` entry, its data will be synced into the Algolia index! Let's take, for example, the following sample entry:
 
 <img width="1853" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/03a5c3d2-612b-40f8-a477-1115c5984c75">
 
