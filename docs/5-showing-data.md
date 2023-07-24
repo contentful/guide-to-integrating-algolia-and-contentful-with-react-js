@@ -175,3 +175,4 @@ Now if you run the dev server with `npm run dev` and go to `http://localhost:517
 
 <img width="1340" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/bbb0bcf0-83da-4c46-b11d-f563ed8fd84d">
 
+We're missing only one important piece that Algolia easily allow us to manage, filtering and sorting! Let's get into it.
