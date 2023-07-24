@@ -9,7 +9,7 @@ In your Algolia dashboard, create an application. Then, create an index. You can
 Now, you have to go to the `Settings` section (the cog icon at the bottom of the page) and you'll see your organization settings. Go to `Team and Access > API Keys` and copy your Application ID and your Admin API Key. We need writing access to the index as we'll be syncing data from Contentful to it.
 
 Now, in your Contentful space, go to `Settings > Webhooks`. For the sake of simplicity, we'll use the Algolia webhook template that already exists, but you could also create an endpoint with your own needed business logic and use its url as the webhook's url.
-You'll see a section called `Webhook templates` at the right sidebar. Click on the Algolia one (or in the "See all templates" button if you don't see it and search for it) and input the three required fields: your Algolia Application ID, the name of your index and the Admin API Key.
+You'll see a section called `Webhook templates` at the right sidebar. Click on the Algolia one (or in the "See all templates" button if you don't see it and search for it) and input the three required fields: your Algolia **Application ID**, the name of your index and the **Admin API Key**. This key will allows us to perform write actions over the index. By the other hand, the **Search-Only API Key** is intended to be used in a frontend application to fetch the data from the index, we'll use it later in our React App.
 
 This will create two webhooks. One for the entries indexing and the second one for deleting unpublished entries. Both will be configured with the following:
 
