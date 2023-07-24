@@ -4,3 +4,4 @@
 1. [Contentful Webhook](./1-contentful-webhook.md)
 2. [Creating the Post content type](./2-post-content-type-and-indexing-entries.md)
 3. [Building React App](./3-building-react-app.md)
+4. [Algolia Client Setup](./4-algolia-client-setup.md)
