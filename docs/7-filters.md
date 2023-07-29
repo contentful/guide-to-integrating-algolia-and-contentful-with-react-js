@@ -15,15 +15,15 @@ export const getPosts = async (query = '', facetFilters) => {
 }
 ```
 
-If we print the result of our `data` variable, we'll get something like this:
+If we print the result of our `posts` variable, we'll get something like this:
 
-@TODO: add object image
+<img width="540" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/cd1d2e5c-597c-406d-884c-f5ac443e4d72">
 
 as you can see, we're receiving an empty `facets` object. In order to configure them, go to your index settings in the `Configuration` tab, search for `Facets` and click on the `+ Add an Attribute` button to add the `fields.category.en-US` attribute, and save the changes.
 
-@TODO: add facets image
+<img width="1612" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/2bafa7b8-87a3-40e8-96c8-5dfb70ab2cf4">
 
-Now if we print the value of `data.facets` again, we'll see the `fields.category.en-US` key with the respective amount of records each category value has. In my case, I had three `Developers` blog posts, one `Partners` post, one `Product` post and one `Strategy` post.
+Now if we print the value of `posts.facets` again, we'll see the `fields.category.en-US` key with the respective amount of records each category value has. In my case, I had three `Developers` blog posts, one `Partners` post, one `Product` post and one `Strategy` post.
 
 ```json
 {
@@ -232,4 +232,4 @@ Last but not least, let's add this CSS to our `App.css` file:
 
 And here's our final result!
 
-@TODO: add image
+<img width="1256" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/bc38a1b1-3e5f-4671-9c31-f7c62554e09b">
