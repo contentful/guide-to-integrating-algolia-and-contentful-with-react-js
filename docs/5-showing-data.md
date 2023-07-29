@@ -2,9 +2,7 @@
 
 Now we can start pulling some data and showing it in our React application.
 
-For the sake of simplicity, we'll use the SWR library to fetch the data and persist the state of it. It will also allow us to update it when applying filters to the index search.
-
-Install the dependency running `npm install swr`. Then create a `Post.jsx` file in the `src` folder with the following code:
+We'll create a Post component which will receive the post's data from our index and will display it as a card. Create a `Post.jsx` file in the `src` folder with the following code:
 
 ```jsx
 export const Post = ({ post }) => {
@@ -30,21 +28,31 @@ Also replace the boilerplate code in `./src/App.jsx` with the following:
 ```jsx
 import './App.css'
 import { getPosts } from './algolia-client'
-import useSWR from 'swr'
 import { Post } from './Post'
+import { useState } from 'react'
+import { useEffect } from 'react'
 
 function App() {
-  const { data } = useSWR('posts', getPosts)
+  const [posts, setPosts] = useState()
+  useEffect(() => {
+    const handler = async () => {
+      const data = await getPosts('')
+      if (data) setPosts(data)
+      setPosts(data)
+    }
+    handler()
+  }, [])
 
   return (
     <main>
       <h1 className="page-title">POSTS</h1>
-      <section className="post-cards-grid">
-        <aside className="filters">Here we'll have filters!</aside>
-        <ul className="posts">
-          {data?.hits.map((hit, index) => <li key={hit.sys.id}><Post post={hit}/></li>)}
-        </ul>
-      </section>
+      <ul className="posts">
+        {posts?.hits?.length ? posts.hits.map((hit) => (
+          <li key={hit.objectID}>
+            <Post post={hit} />
+          </li>
+        )) : <p className="no-results">No results!</p>}
+      </ul>
     </main>
   )
 }
@@ -52,16 +60,18 @@ function App() {
 export default App
 ```
 
+Here we're fetching the data from our index using a simple `useEffect` and storing it into the `posts` variable, then we map all the results (i.e. hits) and render Post components.
+
 Finally, delete the `index.css` file as we will not need it anymore and replace the default code in the `App.css` file with these styles:
 
 ```css
 * {
   margin: 0;
   padding: 0;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -74,15 +84,13 @@ Finally, delete the `index.css` file as we will not need it anymore and replace 
   -webkit-text-size-adjust: 100%;
 }
 
-ul {
-  list-style: none;
-}
-
 .page-title {
+  background-image: linear-gradient(-180deg, transparent 0%, transparent 64%, rgb(255, 216, 95) 64%, rgb(255, 216, 95) 87%, transparent 87%, transparent 100%);
   font-size: 2em;
   color: rgb(42, 48, 57);
   line-height: 1.1;
   margin-bottom: 2rem;
+  display: inline-block;
   letter-spacing: 0.1115em;
   font-weight: 800;
 }
@@ -93,24 +101,10 @@ main {
   padding: 2rem;
 }
 
-.post-cards-grid {
-  display: grid;
-  column-gap: 20px;
-  row-gap: 20px;
-  grid-template-columns: 1fr;
-}
-
-.filters {}
-
 .posts {
   display: grid;
+  list-style: none;
   row-gap: 30px;
-}
-
-@media (min-width: 1024px) {
-  .post-cards-grid {
-    grid-template-columns: 25% 75%;
-  }
 }
 
 .post-card-link-wrapper {
@@ -154,25 +148,29 @@ main {
 
 .post-card-footnote {
   line-height: 1.6;
-    font-weight: 400;
-    color: rgb(42, 48, 57);
-    font-size: 14px;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    height: auto;
-    max-height: 1.6em;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  font-weight: 400;
+  color: rgb(42, 48, 57);
+  font-size: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  height: auto;
+  max-height: 1.6em;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .post-card-footnote span {
   color: rgb(219, 227, 231);
   font-weight: 400;
   line-height: 1.6;
 }
+
+.no-results {
+  color: rgb(42, 48, 57);
+  font-weight: 600;
+}
 ```
 
 Now if you run the dev server with `npm run dev` and go to `http://localhost:5173`, you will see your post entries listed!
 
-<img width="1370" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/7d43256a-866c-4fee-acaa-5cf75a97ce1f">
-
+@TODO: add image

@@ -1,20 +1,36 @@
 import './App.css'
 import { getPosts } from './algolia-client'
-import useSWR from 'swr'
 import { Post } from './Post'
+import { useState } from 'react'
+import { useEffect } from 'react'
 
 function App() {
-  const { data } = useSWR('posts', getPosts)
+  const [searchValue, setSearchValue] = useState('')
+  const onSearchChange = (e) => {
+    setSearchValue(e.target.value)
+  }
+
+  const [posts, setPosts] = useState()
+  useEffect(() => {
+    const handler = async () => {
+      const data = await getPosts(searchValue)
+      if (data) setPosts(data)
+      setPosts(data)
+    }
+    handler()
+  }, [searchValue])
 
   return (
     <main>
       <h1 className="page-title">POSTS</h1>
-      <section className="post-cards-grid">
-        <aside className="filters">Here we'll have filters!</aside>
-        <ul className="posts">
-          {data?.hits.map((hit, index) => <li key={index}><Post post={hit}/></li>)}
-        </ul>
-      </section>
+      <input type="text" className="posts-search" placeholder="Type your search here" value={searchValue} onChange={onSearchChange} />
+      <ul className="posts">
+        {posts?.hits?.length ? posts.hits.map((hit) => (
+          <li key={hit.objectID}>
+            <Post post={hit} />
+          </li>
+        )) : <p className="no-results">No results!</p>}
+      </ul>
     </main>
   )
 }

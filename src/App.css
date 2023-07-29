@@ -1,10 +1,10 @@
 * {
   margin: 0;
   padding: 0;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -17,15 +17,13 @@
   -webkit-text-size-adjust: 100%;
 }
 
-ul {
-  list-style: none;
-}
-
 .page-title {
+  background-image: linear-gradient(-180deg, transparent 0%, transparent 64%, rgb(255, 216, 95) 64%, rgb(255, 216, 95) 87%, transparent 87%, transparent 100%);
   font-size: 2em;
   color: rgb(42, 48, 57);
   line-height: 1.1;
   margin-bottom: 2rem;
+  display: inline-block;
   letter-spacing: 0.1115em;
   font-weight: 800;
 }
@@ -36,25 +34,21 @@ main {
   padding: 2rem;
 }
 
-.post-cards-grid {
-  display: grid;
-  column-gap: 20px;
-  row-gap: 20px;
-  grid-template-columns: 1fr;
-}
-
-.filters {
+.posts-search {
+  margin-bottom: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 10px;
+  border-radius: 3px;
+  outline: 0;
+  display: block;
+  border: 1px solid rgb(42, 48, 57, 0.2);
 }
 
 .posts {
   display: grid;
+  list-style: none;
   row-gap: 30px;
-}
-
-@media (min-width: 1024px) {
-  .post-cards-grid {
-    grid-template-columns: 25% 75%;
-  }
 }
 
 .post-card-link-wrapper {
@@ -113,4 +107,9 @@ main {
   color: rgb(219, 227, 231);
   font-weight: 400;
   line-height: 1.6;
+}
+
+.no-results {
+  color: rgb(42, 48, 57);
+  font-weight: 600;
 }
