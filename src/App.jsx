@@ -1,8 +1,8 @@
 import './App.css'
 import { getPosts } from './algolia-client'
 import { Post } from './Post'
-import { useState } from 'react'
-import { useEffect } from 'react'
+import { Facet } from './Facet'
+import { useState, useEffect } from 'react'
 
 function App() {
   const [searchValue, setSearchValue] = useState('')
@@ -41,18 +41,15 @@ function App() {
     setFacetFilters(newFacetFilters)
   }
 
-  console.log(facetFilters)
-  console.log(facetFiltersMap)
-
   const [posts, setPosts] = useState()
   useEffect(() => {
     const handler = async () => {
-      const data = await getPosts(searchValue)
+      const data = await getPosts(searchValue, facetFilters)
       if (data) setPosts(data)
       setPosts(data)
     }
     handler()
-  }, [searchValue])
+  }, [searchValue, facetFilters])
 
   return (
     <main>
@@ -65,31 +62,36 @@ function App() {
         onChange={onSearchChange}
       />
 
-      <section className="post-cards-grid">
-        <aside className="filters">
+      <div className="post-cards-grid">
+        <section className="filters">
           <span className="filters-title">FILTERS</span>
           {posts?.facets && (
-            <div className="filters-box">
+            <ul className="facets">
               {Object.entries(posts.facets).map(([key, value]) => {
-                return <Facet key={key} facetFieldKey={key} facetFieldOptions={value} onChange={onFacetChange} />
+                return (
+                  <li key={key}>
+                    <Facet
+                      facetFiltersMap={facetFiltersMap}
+                      facetFieldKey={key}
+                      facetFieldOptions={value}
+                      onChange={onFacetChange}
+                    />
+                  </li>
+                )
               })}
-            </div>
+            </ul>
           )}
-        </aside>
-        {posts?.hits && (
-          <ul className="posts">
-            {posts?.hits?.length ? (
-              posts.hits.map((hit) => (
-                <li key={hit.objectID}>
-                  <Post post={hit} />
-                </li>
-              ))
-            ) : (
-              <p className="no-results">No results!</p>
-            )}
-          </ul>
-        )}
-      </section>
+        </section>
+        <section className="posts">
+          {posts?.hits?.length ? (
+            posts.hits.map((hit) => <Post post={hit} key={hit.objectID} />)
+          ) : (
+            <p className="no-results">No results!</p>
+          )}
+        </section>
+      </div>
     </main>
   )
 }
+
+export default App

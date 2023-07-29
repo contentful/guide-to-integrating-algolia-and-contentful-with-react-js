@@ -7,3 +7,4 @@
 4. [Algolia Client Setup](./4-algolia-client-setup.md)
 5. [Showing data in the client](./5-showing-data.md)
 6. [Sending queries to the index](./6-search.md)
+7. [Adding filters](./7-filters.md)

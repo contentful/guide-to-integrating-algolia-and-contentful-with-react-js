@@ -1,4 +1,4 @@
-export const Facet = ({ facetFieldKey, facetFieldOptions, onChange }) => {
+export const Facet = ({ facetFieldKey, facetFiltersMap, facetFieldOptions, onChange }) => {
   const sanitizedFacetTitle = facetFieldKey.match(/(?<=fields.)[A-Za-z]+(?=.en-US)/)[0]
 
   return (
@@ -12,6 +12,7 @@ export const Facet = ({ facetFieldKey, facetFieldOptions, onChange }) => {
               <input
                 id={inputId}
                 type="checkbox"
+                checked={facetFiltersMap.get(facetFieldKey)?.includes(facetLabel)}
                 onChange={(e) => {
                   onChange(facetFieldKey, e.target.value)
                 }}

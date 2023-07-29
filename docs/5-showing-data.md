@@ -46,13 +46,11 @@ function App() {
   return (
     <main>
       <h1 className="page-title">POSTS</h1>
-      <ul className="posts">
+      <section className="posts">
         {posts?.hits?.length ? posts.hits.map((hit) => (
-          <li key={hit.objectID}>
-            <Post post={hit} />
-          </li>
+          <Post post={hit} key={hit.objectID}/>
         )) : <p className="no-results">No results!</p>}
-      </ul>
+      </section>
     </main>
   )
 }
@@ -103,7 +101,6 @@ main {
 
 .posts {
   display: grid;
-  list-style: none;
   row-gap: 30px;
 }
 
@@ -174,5 +171,3 @@ main {
 Now if you run the dev server with `npm run dev` and go to `http://localhost:5173`, you will see your post entries listed!
 
 <img width="1340" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/bbb0bcf0-83da-4c46-b11d-f563ed8fd84d">
-
-We're missing only one important piece that Algolia easily allow us to manage, filtering and sorting! Let's get into it.

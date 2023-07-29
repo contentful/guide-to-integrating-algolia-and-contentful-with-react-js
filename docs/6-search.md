@@ -4,6 +4,8 @@ Now that we're able to fetch our posts, a really nice feature that Algolia provi
 
 Go to your Algolia dashboard and then to your index settings in the `Configuration` tab. Then click on `Searchable attributes` and add `fields.title.en-US` and `fields.category.en-US`. With this we're telling Algolia to only search for matches within these 2 fields, improving the performance of the search.
 
+<img width="1607" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/9d624fd9-fa17-43f1-840f-c37e919de182">
+
 Now let's modify our `App` component, let's add a search input and some states:
 
 ```jsx
@@ -58,4 +60,3 @@ Also add the styles for our input in the `App.css` file:
 Now we can type some query and update our results! We can search for words within the title of our posts or for categories. If I type `Developers`, the posts will be filtered and those with that category will show up.
 
 <img width="1377" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/2f940f22-1007-480e-bb87-1c6aa732384e">
-
