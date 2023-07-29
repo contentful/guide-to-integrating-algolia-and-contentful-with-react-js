@@ -29,16 +29,18 @@ Also replace the boilerplate code in `./src/App.jsx` with the following:
 import './App.css'
 import { getPosts } from './algolia-client'
 import { Post } from './Post'
-import { useState } from 'react'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 
 function App() {
+  const [loading, setLoading] = useState(false)
   const [posts, setPosts] = useState()
   useEffect(() => {
     const handler = async () => {
+      setLoading(true)
       const data = await getPosts('')
       if (data) setPosts(data)
       setPosts(data)
+      setLoading(false)
     }
     handler()
   }, [])
@@ -46,13 +48,10 @@ function App() {
   return (
     <main>
       <h1 className="page-title">POSTS</h1>
-      <ul className="posts">
-        {posts?.hits?.length ? posts.hits.map((hit) => (
-          <li key={hit.objectID}>
-            <Post post={hit} />
-          </li>
-        )) : <p className="no-results">No results!</p>}
-      </ul>
+      <section className="posts">
+        {!posts?.hits?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
+        {!!posts?.hits?.length && posts.hits.map((hit) => <Post post={hit} key={hit.objectID} />)}
+      </section>
     </main>
   )
 }
@@ -69,6 +68,7 @@ Finally, delete the `index.css` file as we will not need it anymore and replace 
   margin: 0;
   padding: 0;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
 }
 
 :root {
@@ -85,7 +85,15 @@ Finally, delete the `index.css` file as we will not need it anymore and replace 
 }
 
 .page-title {
-  background-image: linear-gradient(-180deg, transparent 0%, transparent 64%, rgb(255, 216, 95) 64%, rgb(255, 216, 95) 87%, transparent 87%, transparent 100%);
+  background-image: linear-gradient(
+    -180deg,
+    transparent 0%,
+    transparent 64%,
+    rgb(255, 216, 95) 64%,
+    rgb(255, 216, 95) 87%,
+    transparent 87%,
+    transparent 100%
+  );
   font-size: 2em;
   color: rgb(42, 48, 57);
   line-height: 1.1;
@@ -103,7 +111,6 @@ main {
 
 .posts {
   display: grid;
-  list-style: none;
   row-gap: 30px;
 }
 
@@ -115,7 +122,7 @@ main {
 
 .post-card-link-wrapper:hover {
   transform: translateY(-3px);
-  box-shadow: rgba(0, 0, 0, 0.10) 0px 5px 15px 5px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 15px 5px;
 }
 
 .post-card {
@@ -165,7 +172,7 @@ main {
   line-height: 1.6;
 }
 
-.no-results {
+.state-message {
   color: rgb(42, 48, 57);
   font-weight: 600;
 }
@@ -174,4 +181,3 @@ main {
 Now if you run the dev server with `npm run dev` and go to `http://localhost:5173`, you will see your post entries listed!
 
 <img width="1340" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/bbb0bcf0-83da-4c46-b11d-f563ed8fd84d">
-
