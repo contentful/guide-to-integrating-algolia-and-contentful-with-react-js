@@ -173,4 +173,5 @@ main {
 
 Now if you run the dev server with `npm run dev` and go to `http://localhost:5173`, you will see your post entries listed!
 
-@TODO: add image
+<img width="1340" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/bbb0bcf0-83da-4c46-b11d-f563ed8fd84d">
+
