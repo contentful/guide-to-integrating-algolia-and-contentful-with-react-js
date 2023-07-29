@@ -15,12 +15,15 @@ function App() {
     setSearchValue(e.target.value)
   }
 
+  const [loading, setLoading] = useState(false)
   const [posts, setPosts] = useState()
   useEffect(() => {
     const handler = async () => {
+      setLoading(true)
       const data = await getPosts(searchValue)
       if (data) setPosts(data)
       setPosts(data)
+      setLoading(false)
     }
     handler()
   }, [searchValue])
@@ -28,14 +31,17 @@ function App() {
   return (
     <main>
       <h1 className="page-title">POSTS</h1>
-      <input type="text" className="posts-search" placeholder="Type your search here" value={searchValue} onChange={onSearchChange} />
-      <ul className="posts">
-        {posts?.hits?.length ? posts.hits.map((hit) => (
-          <li key={hit.objectID}>
-            <Post post={hit} />
-          </li>
-        )) : <p className="no-results">No results!</p>}
-      </ul>
+      <input
+        type="text"
+        className="posts-search"
+        placeholder="Type your search here"
+        value={searchValue}
+        onChange={onSearchChange}
+      />
+      <section className="posts">
+        {!posts?.hits?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
+        {!!posts?.hits?.length && posts.hits.map((hit) => <Post post={hit} key={hit.objectID} />)}
+      </section>
     </main>
   )
 }
@@ -54,7 +60,6 @@ Also add the styles for our input in the `App.css` file:
   display: block;
   border: 1px solid rgb(42, 48, 57, 0.2);
 }
-
 ```
 
 Now we can type some query and update our results! We can search for words within the title of our posts or for categories. If I type `Developers`, the posts will be filtered and those with that category will show up.

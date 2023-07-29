@@ -165,7 +165,7 @@ main {
   line-height: 1.6;
 }
 
-.no-results {
+.state-message {
   color: rgb(42, 48, 57);
   font-weight: 600;
 }

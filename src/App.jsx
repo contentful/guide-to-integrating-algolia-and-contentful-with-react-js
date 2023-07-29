@@ -41,12 +41,15 @@ function App() {
     setFacetFilters(newFacetFilters)
   }
 
+  const [loading, setLoading] = useState(false)
   const [posts, setPosts] = useState()
   useEffect(() => {
     const handler = async () => {
+      setLoading(true)
       const data = await getPosts(searchValue, facetFilters)
       if (data) setPosts(data)
       setPosts(data)
+      setLoading(false)
     }
     handler()
   }, [searchValue, facetFilters])
@@ -83,10 +86,9 @@ function App() {
           )}
         </section>
         <section className="posts">
-          {posts?.hits?.length ? (
+          {!posts?.hits?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
+          {!!posts?.hits?.length && (
             posts.hits.map((hit) => <Post post={hit} key={hit.objectID} />)
-          ) : (
-            <p className="no-results">No results!</p>
           )}
         </section>
       </div>

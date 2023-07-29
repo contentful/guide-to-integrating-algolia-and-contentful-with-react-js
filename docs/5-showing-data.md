@@ -33,12 +33,15 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 
 function App() {
+  const [loading, setLoading] = useState(false)
   const [posts, setPosts] = useState()
   useEffect(() => {
     const handler = async () => {
+      setLoading(true)
       const data = await getPosts('')
       if (data) setPosts(data)
       setPosts(data)
+      setLoading(false)
     }
     handler()
   }, [])
@@ -47,9 +50,8 @@ function App() {
     <main>
       <h1 className="page-title">POSTS</h1>
       <section className="posts">
-        {posts?.hits?.length ? posts.hits.map((hit) => (
-          <Post post={hit} key={hit.objectID}/>
-        )) : <p className="no-results">No results!</p>}
+        {!posts?.hits?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
+        {!!posts?.hits?.length && posts.hits.map((hit) => <Post post={hit} key={hit.objectID} />)}
       </section>
     </main>
   )
@@ -83,7 +85,15 @@ Finally, delete the `index.css` file as we will not need it anymore and replace 
 }
 
 .page-title {
-  background-image: linear-gradient(-180deg, transparent 0%, transparent 64%, rgb(255, 216, 95) 64%, rgb(255, 216, 95) 87%, transparent 87%, transparent 100%);
+  background-image: linear-gradient(
+    -180deg,
+    transparent 0%,
+    transparent 64%,
+    rgb(255, 216, 95) 64%,
+    rgb(255, 216, 95) 87%,
+    transparent 87%,
+    transparent 100%
+  );
   font-size: 2em;
   color: rgb(42, 48, 57);
   line-height: 1.1;
@@ -112,7 +122,7 @@ main {
 
 .post-card-link-wrapper:hover {
   transform: translateY(-3px);
-  box-shadow: rgba(0, 0, 0, 0.10) 0px 5px 15px 5px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 5px 15px 5px;
 }
 
 .post-card {
@@ -162,7 +172,7 @@ main {
   line-height: 1.6;
 }
 
-.no-results {
+.state-message {
   color: rgb(42, 48, 57);
   font-weight: 600;
 }

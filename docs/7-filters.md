@@ -27,16 +27,51 @@ Now if we print the value of `data.facets` again, we'll see the `fields.category
 
 ```json
 {
-    "fields.category.en-US": {
-        "Developers": 3,
-        "Partners": 1,
-        "Product": 1,
-        "Strategy": 1
-    }
+  "fields.category.en-US": {
+    "Developers": 3,
+    "Partners": 1,
+    "Product": 1,
+    "Strategy": 1
+  }
 }
 ```
 
-Now that we know which categories we have and the exact amount of records that match each category, we can create a filters sidebar defining the `App` component as it follows:
+Now that we know which categories we have and the exact amount of records that match each category, we can create a filters sidebar to show them. Let's first create our `Facet` component in the `Facet.jsx` file inside the `src` folder:
+
+```jsx
+export const Facet = ({ facetFieldKey, facetFiltersMap, facetFieldOptions, onChange }) => {
+  const sanitizedFacetTitle = facetFieldKey.match(/(?<=fields.)[A-Za-z]+(?=.en-US)/)[0]
+
+  return (
+    <div>
+      <span className="facet-title">{sanitizedFacetTitle.toUpperCase()}</span>
+      <div className="facet-options">
+        {Object.entries(facetFieldOptions).map(([facetLabel, facetQty], idx) => {
+          const inputId = `input-${facetLabel}-${idx}`
+          return (
+            <div className="facet-option" key={`${facetLabel}-${idx}`}>
+              <input
+                id={inputId}
+                type="checkbox"
+                checked={facetFiltersMap.get(facetFieldKey)?.includes(facetLabel)}
+                onChange={(e) => {
+                  onChange(facetFieldKey, e.target.value)
+                }}
+                value={facetLabel}
+              />
+              <label htmlFor={inputId}>
+                {facetLabel} ({facetQty})
+              </label>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+```
+
+Let's also add this line at the top of our `App.jsx` file: `import { Facet } from './Facet'`, then update the App component as follows:
 
 ```jsx
 function App() {
@@ -76,12 +111,15 @@ function App() {
     setFacetFilters(newFacetFilters)
   }
 
+  const [loading, setLoading] = useState(false)
   const [posts, setPosts] = useState()
   useEffect(() => {
     const handler = async () => {
+      setLoading(true)
       const data = await getPosts(searchValue, facetFilters)
       if (data) setPosts(data)
       setPosts(data)
+      setLoading(false)
     }
     handler()
   }, [searchValue, facetFilters])
@@ -101,24 +139,26 @@ function App() {
         <section className="filters">
           <span className="filters-title">FILTERS</span>
           {posts?.facets && (
-            <div className="filters-box">
+            <ul className="facets">
               {Object.entries(posts.facets).map(([key, value]) => {
-                return <Facet key={key} facetFiltersMap={facetFiltersMap} facetFieldKey={key} facetFieldOptions={value} onChange={onFacetChange} />
+                return (
+                  <li key={key}>
+                    <Facet
+                      facetFiltersMap={facetFiltersMap}
+                      facetFieldKey={key}
+                      facetFieldOptions={value}
+                      onChange={onFacetChange}
+                    />
+                  </li>
+                )
               })}
-            </div>
+            </ul>
           )}
         </section>
-        <ul className="posts">
-          {posts?.hits?.length ? (
-            posts.hits.map((hit) => (
-              <li key={hit.objectID}>
-                <Post post={hit} />
-              </li>
-            ))
-          ) : (
-            <p className="no-results">No results!</p>
-          )}
-        </ul>
+        <section className="posts">
+          {!posts?.hits?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
+          {!!posts?.hits?.length && posts.hits.map((hit) => <Post post={hit} key={hit.objectID} />)}
+        </section>
       </div>
     </main>
   )
@@ -126,41 +166,6 @@ function App() {
 ```
 
 Now we're using the `posts.facets` object to render our filter list. The `facetFilters` and `facetFiltersMap` variables help us to store the information of which facets have been already selected.
-
-Let's also update our `Facet` component with a new `facetFiltersMap` prop. This will help us to know if some option is already selected or not:
-
-```jsx
-const Facet = ({ facetFieldKey, facetFiltersMap, facetFieldOptions, onChange }) => {
-  const sanitizedFacetTitle = facetFieldKey.match(/(?<=fields.)[A-Za-z]+(?=.en-US)/)[0]
-
-  return (
-    <div>
-      <span className="facet-title">{sanitizedFacetTitle.toUpperCase()}</span>
-      <div className="facet-options">
-        {Object.entries(facetFieldOptions).map(([facetLabel, facetQty], idx) => {
-          const inputId = `input-${facetLabel}-${idx}`
-          return (
-            <div className="facet-option" key={`${facetLabel}-${idx}`}>
-              <input
-                id={inputId}
-                type="checkbox"
-                checked={facetFiltersMap.get(facetFieldKey)?.includes(facetLabel)}
-                onChange={(e) => {
-                  onChange(facetFieldKey, e.target.value)
-                }}
-                value={facetLabel}
-              />
-              <label htmlFor={inputId}>
-                {facetLabel} ({facetQty})
-              </label>
-            </div>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
-```
 
 Last but not least, let's add this CSS to our `App.css` file:
 
@@ -195,6 +200,30 @@ Last but not least, let's add this CSS to our `App.css` file:
 
 .facets {
   list-style: none;
+}
+
+.facet-title {
+  display: block;
+  font-size: 0.9rem;
+  color: rgb(42, 48, 57);
+  line-height: 1.1;
+  display: inline-block;
+  letter-spacing: 0.1115em;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.facet-options {
+  display: grid;
+  row-gap: 0.5rem;
+  line-height: 1.1;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.facet-option {
+  display: flex;
+  gap: 8px;
 }
 ```
 
