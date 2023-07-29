@@ -1,4 +1,4 @@
-# Filtering and sorting posts
+# Filtering posts
 
 Let's dive into another great Algolia feature: filtering. We first need to domain the concept of [facets](https://www.algolia.com/doc/guides/managing-results/refine-results/faceting/). They basically allow us to add categorization to our search results using some of the attributes our data has. For example, we can define the `category` field of our blog posts as a facet in order to refine our searches using the category value our entries have.
 
