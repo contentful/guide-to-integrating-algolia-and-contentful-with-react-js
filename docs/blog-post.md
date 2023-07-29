@@ -8,3 +8,4 @@
 5. [Showing data in the client](./5-showing-data.md)
 6. [Sending queries to the index](./6-search.md)
 7. [Adding filters](./7-filters.md)
+8. [Wrapping Up](./7-wrapping-up.md)
