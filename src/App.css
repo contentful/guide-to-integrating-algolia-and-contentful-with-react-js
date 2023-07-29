@@ -45,6 +45,53 @@ main {
   border: 1px solid rgb(42, 48, 57, 0.2);
 }
 
+.post-cards-grid {
+  display: grid;
+  column-gap: 20px;
+  row-gap: 20px;
+  grid-template-columns: 1fr;
+}
+
+.filters {
+  padding: 2rem;
+  background-color: white;
+}
+
+.filters-title {
+  font-size: 1.5em;
+  color: rgb(42, 48, 57);
+  line-height: 1.1;
+  margin-bottom: 2rem;
+  display: inline-block;
+  letter-spacing: 0.1115em;
+  font-weight: 800;
+  background-image: linear-gradient(-180deg, transparent 0%, transparent 64%, rgb(255, 216, 95) 64%, rgb(255, 216, 95) 87%, transparent 87%, transparent 100%);
+}
+
+.facet-title {
+  display: block;
+  font-size: 0.9rem;
+  color: rgb(42, 48, 57);
+  line-height: 1.1;
+  display: inline-block;
+  letter-spacing: 0.1115em;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.facet-option {
+  display: flex;
+  gap: 8px;
+}
+
+.facet-options {
+  display: grid;
+  row-gap: 0.5rem;
+  line-height: 1.1;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
 .posts {
   display: grid;
   list-style: none;
