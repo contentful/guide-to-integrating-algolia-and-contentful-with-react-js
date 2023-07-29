@@ -14,9 +14,14 @@ const ALGOLIA_INDEX = import.meta.env.VITE_ALGOLIA_INDEX
 const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_API_TOKEN)
 const index = client.initIndex(ALGOLIA_INDEX)
 
-export const getPosts = (query = '') => {
-  return index.search(query)
+export const getPosts = async (query = '') => {
+  try {
+    const data = await index.search(query)
+    return data
+  } catch (error) {
+    return undefined
+  }
 }
 ```
 
-With this we're retrieving our credentials, creating an algolia client and initializing the index, which will allow us to perform queries against it.
+With this we're retrieving our credentials, creating an algolia client and initializing the index, which will allow us to perform queries against it. The `getPosts` function will help us to retrieve our posts based on a string query.
