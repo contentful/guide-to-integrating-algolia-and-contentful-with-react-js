@@ -116,7 +116,7 @@ main {
 
 .post-card-link-wrapper {
   text-decoration: none;
-  transition: all 0.4s ease-in-out;
+  transition: all 0.25s ease-in-out;
   display: block;
 }
 

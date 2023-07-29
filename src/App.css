@@ -93,6 +93,9 @@ main {
   display: flex;
   gap: 8px;
 }
+.facet-option label, .facet-option input {
+  cursor: pointer;
+}
 
 .facet-options {
   display: grid;
@@ -109,7 +112,7 @@ main {
 
 .post-card-link-wrapper {
   text-decoration: none;
-  transition: all 0.4s ease-in-out;
+  transition: all 0.25s ease-in-out;
   display: block;
 }
 

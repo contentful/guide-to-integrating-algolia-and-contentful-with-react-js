@@ -228,6 +228,9 @@ Last but not least, let's add this CSS to our `App.css` file:
   display: flex;
   gap: 8px;
 }
+.facet-option label, .facet-option input {
+  cursor: pointer;
+}
 ```
 
 And here's our final result! We're now able to filter our results based on the Category field and also type a text query to search for matches in both the Title and Category fields.
