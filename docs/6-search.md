@@ -2,7 +2,9 @@
 
 Now that we're able to fetch our posts, a really nice feature that Algolia provides us is performing search against our index blazingly fast! In order to get the most from our searches, we need to add some configurations into our index.
 
-Go to your Algolia dashboard and then to your index settings in the `Configuration` tab. Then click on `Searchable attributes` and add `fields.title.en-US` and `fields.category.en-US`. With this we're telling Algolia to only search for matches within these 2 fields, improving the performance of the search.
+Go to your Algolia dashboard and then to your index settings in the `Configuration` tab. Then click on `Searchable attributes` and add `fields.title.en-US` and `fields.category.en-US`. With this we're telling Algolia to only search for matches within these 2 fields, improving the performance of the search. Don't forget to click on `Review and Save Settings` to save these changes!
+
+<img width="1607" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/9d624fd9-fa17-43f1-840f-c37e919de182">
 
 <img width="1607" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/9d624fd9-fa17-43f1-840f-c37e919de182">
 
