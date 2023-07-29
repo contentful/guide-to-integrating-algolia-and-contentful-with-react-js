@@ -138,8 +138,8 @@ function App() {
       <div className="post-cards-grid">
         <section className="filters">
           <span className="filters-title">FILTERS</span>
-          {!Object.entries(posts?.facets).length && (
-            <p className="state-message">{loading ? 'Fetching categories...' : 'No categories!'}</p>
+          {(!posts?.facets || !Object.entries(posts?.facets).length) && (
+            <p className="state-message">{loading ? 'Fetching filters...' : 'No filters!'}</p>
           )}
           {posts?.facets && (
             <ul className="facets">

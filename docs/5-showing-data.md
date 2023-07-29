@@ -29,8 +29,7 @@ Also replace the boilerplate code in `./src/App.jsx` with the following:
 import './App.css'
 import { getPosts } from './algolia-client'
 import { Post } from './Post'
-import { useState } from 'react'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 
 function App() {
   const [loading, setLoading] = useState(false)
@@ -69,6 +68,7 @@ Finally, delete the `index.css` file as we will not need it anymore and replace 
   margin: 0;
   padding: 0;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  box-sizing: border-box;
 }
 
 :root {

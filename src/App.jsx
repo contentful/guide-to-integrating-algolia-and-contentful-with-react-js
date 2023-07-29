@@ -54,9 +54,6 @@ function App() {
     handler()
   }, [searchValue, facetFilters])
 
-  console.log(posts.facets);
-  
-
   return (
     <main>
       <h1 className="page-title">POSTS</h1>
@@ -71,7 +68,9 @@ function App() {
       <div className="post-cards-grid">
         <section className="filters">
           <span className="filters-title">FILTERS</span>
-          {!Object.entries(posts?.facets).length && <p className="state-message">{loading ? 'Fetching categories...' : 'No categories!'}</p>}
+          {(!posts?.facets || !Object.entries(posts?.facets).length) && (
+            <p className="state-message">{loading ? 'Fetching filters...' : 'No filters!'}</p>
+          )}
           {posts?.facets && (
             <ul className="facets">
               {Object.entries(posts.facets).map(([key, value]) => {
@@ -91,9 +90,7 @@ function App() {
         </section>
         <section className="posts">
           {!posts?.hits?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
-          {!!posts?.hits?.length && (
-            posts.hits.map((hit) => <Post post={hit} key={hit.objectID} />)
-          )}
+          {!!posts?.hits?.length && posts.hits.map((hit) => <Post post={hit} key={hit.objectID} />)}
         </section>
       </div>
     </main>
