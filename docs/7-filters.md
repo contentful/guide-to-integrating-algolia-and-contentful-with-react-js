@@ -230,6 +230,6 @@ Last but not least, let's add this CSS to our `App.css` file:
 }
 ```
 
-And here's our final result!
+And here's our final result! We're now able to filter our results based on the Category field and also type a text query to search for matches in both the Title and Category fields.
 
 <img width="1256" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/bc38a1b1-3e5f-4671-9c31-f7c62554e09b">
