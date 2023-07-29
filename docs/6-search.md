@@ -57,4 +57,5 @@ Also add the styles for our input in the `App.css` file:
 
 Now we can type some query and update our results! We can search for words within the title of our posts or for categories. If I type `Developers`, the posts will be filtered and those with that category will show up.
 
-@TODO: add image
+<img width="1377" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/2f940f22-1007-480e-bb87-1c6aa732384e">
+
