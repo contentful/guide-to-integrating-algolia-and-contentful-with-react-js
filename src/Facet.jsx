@@ -1,25 +1,23 @@
-export const Facet = ({ facetFieldKey, facetFiltersMap, facetFieldOptions, onChange }) => {
-  const sanitizedFacetTitle = facetFieldKey.match(/(?<=fields.)[A-Za-z]+(?=.en-US)/)[0]
-
+export const Facet = ({ facetKey, options, title, facetFiltersMap, onChange }) => {
   return (
     <div>
-      <span className="facet-title">{sanitizedFacetTitle.toUpperCase()}</span>
+      <span className="facet-title">{title.toUpperCase()}</span>
       <div className="facet-options">
-        {Object.entries(facetFieldOptions).map(([facetLabel, facetQty], idx) => {
-          const inputId = `input-${facetLabel}-${idx}`
+        {Object.entries(options).map(([facetOptionLabel, facetOptionQty], idx) => {
+          const inputId = `input-${facetOptionLabel}-${idx}`
           return (
-            <div className="facet-option" key={`${facetLabel}-${idx}`}>
+            <div className="facet-option" key={`${facetOptionLabel}-${idx}`}>
               <input
                 id={inputId}
                 type="checkbox"
-                checked={facetFiltersMap.get(facetFieldKey)?.includes(facetLabel)}
+                checked={facetFiltersMap.get(facetKey)?.includes(facetOptionLabel)}
                 onChange={(e) => {
-                  onChange(facetFieldKey, e.target.value)
+                  onChange(facetKey, e.target.value)
                 }}
-                value={facetLabel}
+                value={facetOptionLabel}
               />
               <label htmlFor={inputId}>
-                {facetLabel} ({facetQty})
+                {facetOptionLabel} ({facetOptionQty})
               </label>
             </div>
           )

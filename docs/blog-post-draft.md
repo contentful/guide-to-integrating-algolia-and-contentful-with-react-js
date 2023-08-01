@@ -10,12 +10,12 @@ This tutorial will guide you through using Algolia to create search indexes and 
 
 To follow along, you’ll need:
 
-* A Contentful account. [Sign up](https://www.contentful.com/sign-up/) if you do not have one.
-* An Algolia account. [Sign up](https://dashboard.algolia.com/users/sign_up) if you do not have one.
+- A Contentful account. [Sign up](https://www.contentful.com/sign-up/) if you do not have one.
+- An Algolia account. [Sign up](https://dashboard.algolia.com/users/sign_up) if you do not have one.
 
-* Intermediate knowledge of JavaScript
-* Intermediate knowledge of [Next.js](https://nextjs.org/).
-* Node.js version 18 or above.
+- Intermediate knowledge of JavaScript
+- Intermediate knowledge of [Next.js](https://nextjs.org/).
+- Node.js version 18 or above.
 
 ## Setup Contentful webhooks connected with Algolia
 
@@ -387,10 +387,29 @@ Let's dive into another great Algolia feature: filtering. We first need to under
 Let's modify our `getPosts` function a little bit:
 
 ```js
-export const getPosts = async (query = '', facetFilters) => {
+export const getPosts = async (query = '', facetFiltersMap) => {
+  const facetFilters = [...facetFiltersMap]
+    .map(([key, val]) => {
+      if (val.length) return `${key}:${val.join(',')}`
+      return ''
+    })
+    .filter(Boolean)
+
   try {
     const data = await index.search(query, { facetFilters, facets: ['*'] })
-    return data
+
+    const sanitizedFacets = Object.entries(data.facets).map(([facetKey, facetOptions]) => {
+      return {
+        key: facetKey,
+        options: facetOptions,
+        title: facetKey.match(/(?<=fields.)[A-Za-z]+(?=.en-US)/)[0],
+      }
+    })
+
+    return {
+      ...data,
+      facets: sanitizedFacets,
+    }
   } catch (error) {
     return undefined
   }
@@ -421,28 +440,26 @@ Now if we print the value of `posts.facets` again, we'll see the `fields.categor
 Now that we know which categories we have and the exact amount of records that match each category, we can create a filters sidebar to show them. Let's first create our `Facet` component in the `Facet.jsx` file inside the `src` folder:
 
 ```jsx
-export const Facet = ({ facetFieldKey, facetFiltersMap, facetFieldOptions, onChange }) => {
-  const sanitizedFacetTitle = facetFieldKey.match(/(?<=fields.)[A-Za-z]+(?=.en-US)/)[0]
-
+export const Facet = ({ facetKey, options, title, facetFiltersMap, onChange }) => {
   return (
     <div>
-      <span className="facet-title">{sanitizedFacetTitle.toUpperCase()}</span>
+      <span className="facet-title">{title.toUpperCase()}</span>
       <div className="facet-options">
-        {Object.entries(facetFieldOptions).map(([facetLabel, facetQty], idx) => {
-          const inputId = `input-${facetLabel}-${idx}`
+        {Object.entries(options).map(([facetOptionLabel, facetOptionQty], idx) => {
+          const inputId = `input-${facetOptionLabel}-${idx}`
           return (
-            <div className="facet-option" key={`${facetLabel}-${idx}`}>
+            <div className="facet-option" key={`${facetOptionLabel}-${idx}`}>
               <input
                 id={inputId}
                 type="checkbox"
-                checked={facetFiltersMap.get(facetFieldKey)?.includes(facetLabel)}
+                checked={facetFiltersMap.get(facetKey)?.includes(facetOptionLabel)}
                 onChange={(e) => {
-                  onChange(facetFieldKey, e.target.value)
+                  onChange(facetKey, e.target.value)
                 }}
-                value={facetLabel}
+                value={facetOptionLabel}
               />
               <label htmlFor={inputId}>
-                {facetLabel} ({facetQty})
+                {facetOptionLabel} ({facetOptionQty})
               </label>
             </div>
           )
@@ -462,7 +479,6 @@ function App() {
     setSearchValue(e.target.value)
   }
 
-  const [facetFilters, setFacetFilters] = useState([])
   const [facetFiltersMap, setFacetFiltersMap] = useState(new Map())
 
   const onFacetChange = (facetKey, value) => {
@@ -483,14 +499,7 @@ function App() {
 
     if (!newMap.get(facetKey).length) newMap.delete(facetKey)
 
-    const newFacetFilters = [...newMap]
-      .map(([key, val]) => {
-        if (val.length) return `${key}:${val.join(',')}`
-        return ''
-      })
-      .filter(Boolean)
     setFacetFiltersMap(newMap)
-    setFacetFilters(newFacetFilters)
   }
 
   const [loading, setLoading] = useState(false)
@@ -498,13 +507,13 @@ function App() {
   useEffect(() => {
     const handler = async () => {
       setLoading(true)
-      const data = await getPosts(searchValue, facetFilters)
+      const data = await getPosts(searchValue, facetFiltersMap)
       if (data) setPosts(data)
       setPosts(data)
       setLoading(false)
     }
     handler()
-  }, [searchValue, facetFilters])
+  }, [searchValue, facetFiltersMap])
 
   return (
     <main>
@@ -525,13 +534,14 @@ function App() {
           )}
           {posts?.facets && (
             <ul className="facets">
-              {Object.entries(posts.facets).map(([key, value]) => {
+              {posts.facets.map(({ key, options, title }) => {
                 return (
                   <li key={key}>
                     <Facet
                       facetFiltersMap={facetFiltersMap}
-                      facetFieldKey={key}
-                      facetFieldOptions={value}
+                      facetKey={key}
+                      options={options}
+                      title={title}
                       onChange={onFacetChange}
                     />
                   </li>
@@ -610,7 +620,8 @@ Last but not least, let's add this CSS to our `App.css` file:
   display: flex;
   gap: 8px;
 }
-.facet-option label, .facet-option input {
+.facet-option label,
+.facet-option input {
   cursor: pointer;
 }
 ```

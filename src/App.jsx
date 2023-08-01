@@ -10,7 +10,6 @@ function App() {
     setSearchValue(e.target.value)
   }
 
-  const [facetFilters, setFacetFilters] = useState([])
   const [facetFiltersMap, setFacetFiltersMap] = useState(new Map())
 
   const onFacetChange = (facetKey, value) => {
@@ -31,14 +30,7 @@ function App() {
 
     if (!newMap.get(facetKey).length) newMap.delete(facetKey)
 
-    const newFacetFilters = [...newMap]
-      .map(([key, val]) => {
-        if (val.length) return `${key}:${val.join(',')}`
-        return ''
-      })
-      .filter(Boolean)
     setFacetFiltersMap(newMap)
-    setFacetFilters(newFacetFilters)
   }
 
   const [loading, setLoading] = useState(false)
@@ -46,13 +38,13 @@ function App() {
   useEffect(() => {
     const handler = async () => {
       setLoading(true)
-      const data = await getPosts(searchValue, facetFilters)
+      const data = await getPosts(searchValue, facetFiltersMap)
       if (data) setPosts(data)
       setPosts(data)
       setLoading(false)
     }
     handler()
-  }, [searchValue, facetFilters])
+  }, [searchValue, facetFiltersMap])
 
   return (
     <main>
@@ -73,13 +65,14 @@ function App() {
           )}
           {posts?.facets && (
             <ul className="facets">
-              {Object.entries(posts.facets).map(([key, value]) => {
+              {posts.facets.map(({ key, options, title }) => {
                 return (
                   <li key={key}>
                     <Facet
                       facetFiltersMap={facetFiltersMap}
-                      facetFieldKey={key}
-                      facetFieldOptions={value}
+                      facetKey={key}
+                      options={options}
+                      title={title}
                       onChange={onFacetChange}
                     />
                   </li>
