@@ -2,11 +2,7 @@
 
 ## Introduction
 
-Content is always changing, and it has to be delivered fastly. Content authors, developers, marketing teams, and everyone involved in the development of a product's content want to see it evolving, being dynamic and scalating quickly.
-
-When you want to show the biggest amount of valuable resources and options to your users, such as sellable products of your brand new e-commerce site, or posts from your blog, you want them to show up as fast as possible, and with the richest user experience in mind, without having to compromise performance or implementation complexity.
-
-[Algolia](https://www.algolia.com/) is a performant search engine that exposes an API to perform fast and relevant search and discovery of your data. Instead of having to make several queries to the content source, which can do the job at the expense of performance and query filtering complexity, Algolia solves this by indexing your data and giving you access to it with ease.
+[Algolia](https://www.algolia.com/) is a performant search engine that exposes an API to perform search and discovery on your data. Instead of having to make several queries to the content source, which can do the job at the expense of performance and query filtering complexity, Algolia solves this by indexing your data and giving you access to it.
 
 This tutorial will guide you through using Algolia to create search indexes and manage data-fetching logic in a React project and how to apply these techniques to data coming from Contentful. We'll be able to display the data in a catalog-like web view. All the code in this tutorial can be found in [this repository](https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js).
 
@@ -23,7 +19,7 @@ To follow along, you’ll need:
 
 ## Setup Contentful webhooks connected with Algolia
 
-First of all, we'll need to know our Algolia credentials and having created a search index.
+First of all, we'll need to create Algolia credentials and a search index.
 
 In your Algolia dashboard, create an application. Then, create an index. You can call it whatever you like. For the purpose of this tutorial, we'll be creating an index of blog posts.
 
@@ -100,7 +96,7 @@ VITE_ALGOLIA_INDEX=<YOUR_INDEX>
 
 Now we'll be able to use these credentials to fetch data from Algolia.
 
-Also make sure you add the `VITE_` prefix to your environment variables in order for Vite to have them available in the browser.
+The `VITE_` prefix is required in your environment variables because these values are public and visible on the client.
 
 ## Setting up the Algolia Client
 
@@ -386,7 +382,7 @@ Now we can type some query and update our results! We can search for words withi
 
 ## Filtering posts
 
-Let's dive into another great Algolia feature: filtering. We first need to domain the concept of [facets](https://www.algolia.com/doc/guides/managing-results/refine-results/faceting/). They basically allow us to add categorization to our search results using some of the attributes our data has. For example, we can define the `category` field of our blog posts as a facet in order to refine our searches using the category value our entries have.
+Let's dive into another great Algolia feature: filtering. We first need to understand the concept of [facets](https://www.algolia.com/doc/guides/managing-results/refine-results/faceting/). They basically allow us to add categorization to our search results using some of the attributes our data has. For example, we can define the `category` field of our blog posts as a facet in order to refine our searches using the category value our entries have.
 
 Let's modify our `getPosts` function a little bit:
 
