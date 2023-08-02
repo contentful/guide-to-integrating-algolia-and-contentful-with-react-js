@@ -13,8 +13,7 @@ To follow along, you’ll need:
 - A Contentful account. [Sign up](https://www.contentful.com/sign-up/) if you do not have one.
 - An Algolia account. [Sign up](https://dashboard.algolia.com/users/sign_up) if you do not have one.
 
-- Intermediate knowledge of JavaScript
-- Intermediate knowledge of [Next.js](https://nextjs.org/).
+- Intermediate knowledge of JavaScript.
 - Node.js version 18 or above.
 
 ## Setup Contentful webhooks connected with Algolia
