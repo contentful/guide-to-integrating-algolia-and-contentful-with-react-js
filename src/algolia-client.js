@@ -7,10 +7,29 @@ const ALGOLIA_INDEX = import.meta.env.VITE_ALGOLIA_INDEX
 const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_API_TOKEN)
 const index = client.initIndex(ALGOLIA_INDEX)
 
-export const getPosts = async (query = '', facetFilters) => {
+export const getPostsData = async (query = '', facetFiltersMap = []) => {
+  const facetFilters = [...facetFiltersMap]
+    .map(([key, val]) => {
+      if (val.length) return `${key}:${val.join(',')}`
+      return ''
+    })
+    .filter(Boolean)
+
   try {
     const data = await index.search(query, { facetFilters, facets: ['*'] })
-    return data
+
+    const sanitizedFacets = Object.entries(data.facets).map(([facetKey, facetOptions]) => {
+      return {
+        key: facetKey,
+        options: facetOptions,
+        title: facetKey.match(/(?<=fields.)[A-Za-z]+(?=.en-US)/)[0],
+      }
+    })
+
+    return {
+      posts: data.hits,
+      facets: sanitizedFacets,
+    }
   } catch (error) {
     return undefined
   }

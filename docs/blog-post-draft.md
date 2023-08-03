@@ -10,12 +10,11 @@ This tutorial will guide you through using Algolia to create search indexes and 
 
 To follow along, you’ll need:
 
-* A Contentful account. [Sign up](https://www.contentful.com/sign-up/) if you do not have one.
-* An Algolia account. [Sign up](https://dashboard.algolia.com/users/sign_up) if you do not have one.
+- A Contentful account. [Sign up](https://www.contentful.com/sign-up/) if you do not have one.
+- An Algolia account. [Sign up](https://dashboard.algolia.com/users/sign_up) if you do not have one.
 
-* Intermediate knowledge of JavaScript
-* Intermediate knowledge of [Next.js](https://nextjs.org/).
-* Node.js version 18 or above.
+- Intermediate knowledge of JavaScript.
+- Node.js version 18 or above.
 
 ## Setup Contentful webhooks connected with Algolia
 
@@ -114,17 +113,19 @@ const ALGOLIA_INDEX = import.meta.env.VITE_ALGOLIA_INDEX
 const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_API_TOKEN)
 const index = client.initIndex(ALGOLIA_INDEX)
 
-export const getPosts = async (query = '') => {
+export const getPostsData = async (query = '') => {
   try {
     const data = await index.search(query)
-    return data
+    return {
+      posts: data.hits
+    }
   } catch (error) {
     return undefined
   }
 }
 ```
 
-With this we're retrieving our credentials, creating an algolia client and initializing the index, which will allow us to perform queries against it. The `getPosts` function will help us to retrieve our posts based on a string query.
+With this we're retrieving our credentials, creating an algolia client and initializing the index, which will allow us to perform queries against it. The `getPostsData` function will help us to retrieve our posts based on a string query.
 
 ## Fetching data from the index and showing it in the client
 
@@ -155,7 +156,7 @@ Also replace the boilerplate code in `./src/App.jsx` with the following:
 
 ```jsx
 import './App.css'
-import { getPosts } from './algolia-client'
+import { getPostsData } from './algolia-client'
 import { Post } from './Post'
 import { useState, useEffect } from 'react'
 
@@ -165,9 +166,8 @@ function App() {
   useEffect(() => {
     const handler = async () => {
       setLoading(true)
-      const data = await getPosts('')
-      if (data) setPosts(data)
-      setPosts(data)
+      const data = await getPostsData('')
+      if (data) setPosts(data.posts)
       setLoading(false)
     }
     handler()
@@ -177,8 +177,8 @@ function App() {
     <main>
       <h1 className="page-title">POSTS</h1>
       <section className="posts">
-        {!posts?.hits?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
-        {!!posts?.hits?.length && posts.hits.map((hit) => <Post post={hit} key={hit.objectID} />)}
+        {!posts?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
+        {!!posts?.length && posts.map((post) => <Post post={post} key={post.objectID} />)}
       </section>
     </main>
   )
@@ -334,9 +334,8 @@ function App() {
   useEffect(() => {
     const handler = async () => {
       setLoading(true)
-      const data = await getPosts(searchValue)
-      if (data) setPosts(data)
-      setPosts(data)
+      const data = await getPostsData(searchValue)
+      if (data) setPosts(data.posts)
       setLoading(false)
     }
     handler()
@@ -353,8 +352,8 @@ function App() {
         onChange={onSearchChange}
       />
       <section className="posts">
-        {!posts?.hits?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
-        {!!posts?.hits?.length && posts.hits.map((hit) => <Post post={hit} key={hit.objectID} />)}
+        {!posts?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
+        {!!posts?.length && posts.map((post) => <Post post={post} key={post.objectID} />)}
       </section>
     </main>
   )
@@ -384,13 +383,32 @@ Now we can type some query and update our results! We can search for words withi
 
 Let's dive into another great Algolia feature: filtering. We first need to understand the concept of [facets](https://www.algolia.com/doc/guides/managing-results/refine-results/faceting/). They basically allow us to add categorization to our search results using some of the attributes our data has. For example, we can define the `category` field of our blog posts as a facet in order to refine our searches using the category value our entries have.
 
-Let's modify our `getPosts` function a little bit:
+Let's modify our `getPostsData` function a little bit:
 
 ```js
-export const getPosts = async (query = '', facetFilters) => {
+export const getPostsData = async (query = '', facetFiltersMap = []) => {
+  const facetFilters = [...facetFiltersMap]
+    .map(([key, val]) => {
+      if (val.length) return `${key}:${val.join(',')}`
+      return ''
+    })
+    .filter(Boolean)
+
   try {
     const data = await index.search(query, { facetFilters, facets: ['*'] })
-    return data
+
+    const sanitizedFacets = Object.entries(data.facets).map(([facetKey, facetOptions]) => {
+      return {
+        key: facetKey,
+        options: facetOptions,
+        title: facetKey.match(/(?<=fields.)[A-Za-z]+(?=.en-US)/)[0],
+      }
+    })
+
+    return {
+      posts: data.hits,
+      facets: sanitizedFacets,
+    }
   } catch (error) {
     return undefined
   }
@@ -421,28 +439,26 @@ Now if we print the value of `posts.facets` again, we'll see the `fields.categor
 Now that we know which categories we have and the exact amount of records that match each category, we can create a filters sidebar to show them. Let's first create our `Facet` component in the `Facet.jsx` file inside the `src` folder:
 
 ```jsx
-export const Facet = ({ facetFieldKey, facetFiltersMap, facetFieldOptions, onChange }) => {
-  const sanitizedFacetTitle = facetFieldKey.match(/(?<=fields.)[A-Za-z]+(?=.en-US)/)[0]
-
+export const Facet = ({ facetKey, options, title, facetFiltersMap, onChange }) => {
   return (
     <div>
-      <span className="facet-title">{sanitizedFacetTitle.toUpperCase()}</span>
+      <span className="facet-title">{title.toUpperCase()}</span>
       <div className="facet-options">
-        {Object.entries(facetFieldOptions).map(([facetLabel, facetQty], idx) => {
-          const inputId = `input-${facetLabel}-${idx}`
+        {Object.entries(options).map(([facetOptionLabel, facetOptionQty], idx) => {
+          const inputId = `input-${facetOptionLabel}-${idx}`
           return (
-            <div className="facet-option" key={`${facetLabel}-${idx}`}>
+            <div className="facet-option" key={`${facetOptionLabel}-${idx}`}>
               <input
                 id={inputId}
                 type="checkbox"
-                checked={facetFiltersMap.get(facetFieldKey)?.includes(facetLabel)}
+                checked={facetFiltersMap.get(facetKey)?.includes(facetOptionLabel)}
                 onChange={(e) => {
-                  onChange(facetFieldKey, e.target.value)
+                  onChange(facetKey, e.target.value)
                 }}
-                value={facetLabel}
+                value={facetOptionLabel}
               />
               <label htmlFor={inputId}>
-                {facetLabel} ({facetQty})
+                {facetOptionLabel} ({facetOptionQty})
               </label>
             </div>
           )
@@ -462,7 +478,6 @@ function App() {
     setSearchValue(e.target.value)
   }
 
-  const [facetFilters, setFacetFilters] = useState([])
   const [facetFiltersMap, setFacetFiltersMap] = useState(new Map())
 
   const onFacetChange = (facetKey, value) => {
@@ -483,28 +498,25 @@ function App() {
 
     if (!newMap.get(facetKey).length) newMap.delete(facetKey)
 
-    const newFacetFilters = [...newMap]
-      .map(([key, val]) => {
-        if (val.length) return `${key}:${val.join(',')}`
-        return ''
-      })
-      .filter(Boolean)
     setFacetFiltersMap(newMap)
-    setFacetFilters(newFacetFilters)
   }
 
   const [loading, setLoading] = useState(false)
   const [posts, setPosts] = useState()
+  const [facets, setFacets] = useState()
+
   useEffect(() => {
     const handler = async () => {
       setLoading(true)
-      const data = await getPosts(searchValue, facetFilters)
-      if (data) setPosts(data)
-      setPosts(data)
+      const data = await getPostsData(searchValue, facetFiltersMap)
+      if (data) {
+        setPosts(data.posts)
+        setFacets(data.facets)
+      }
       setLoading(false)
     }
     handler()
-  }, [searchValue, facetFilters])
+  }, [searchValue, facetFiltersMap])
 
   return (
     <main>
@@ -520,18 +532,19 @@ function App() {
       <div className="post-cards-grid">
         <section className="filters">
           <span className="filters-title">FILTERS</span>
-          {(!posts?.facets || !Object.entries(posts?.facets).length) && (
+          {!facets?.length && (
             <p className="state-message">{loading ? 'Fetching filters...' : 'No filters!'}</p>
           )}
-          {posts?.facets && (
+          {facets && (
             <ul className="facets">
-              {Object.entries(posts.facets).map(([key, value]) => {
+              {facets.map(({ key, options, title }) => {
                 return (
                   <li key={key}>
                     <Facet
                       facetFiltersMap={facetFiltersMap}
-                      facetFieldKey={key}
-                      facetFieldOptions={value}
+                      facetKey={key}
+                      options={options}
+                      title={title}
                       onChange={onFacetChange}
                     />
                   </li>
@@ -541,8 +554,8 @@ function App() {
           )}
         </section>
         <section className="posts">
-          {!posts?.hits?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
-          {!!posts?.hits?.length && posts.hits.map((hit) => <Post post={hit} key={hit.objectID} />)}
+          {!posts?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
+          {!!posts?.length && posts.map((post) => <Post post={post} key={post.objectID} />)}
         </section>
       </div>
     </main>
@@ -610,7 +623,8 @@ Last but not least, let's add this CSS to our `App.css` file:
   display: flex;
   gap: 8px;
 }
-.facet-option label, .facet-option input {
+.facet-option label,
+.facet-option input {
   cursor: pointer;
 }
 ```

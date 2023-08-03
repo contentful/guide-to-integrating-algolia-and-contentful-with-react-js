@@ -1,5 +1,5 @@
 import './App.css'
-import { getPosts } from './algolia-client'
+import { getPostsData } from './algolia-client'
 import { Post } from './Post'
 import { Facet } from './Facet'
 import { useState, useEffect } from 'react'
@@ -10,7 +10,6 @@ function App() {
     setSearchValue(e.target.value)
   }
 
-  const [facetFilters, setFacetFilters] = useState([])
   const [facetFiltersMap, setFacetFiltersMap] = useState(new Map())
 
   const onFacetChange = (facetKey, value) => {
@@ -31,28 +30,25 @@ function App() {
 
     if (!newMap.get(facetKey).length) newMap.delete(facetKey)
 
-    const newFacetFilters = [...newMap]
-      .map(([key, val]) => {
-        if (val.length) return `${key}:${val.join(',')}`
-        return ''
-      })
-      .filter(Boolean)
     setFacetFiltersMap(newMap)
-    setFacetFilters(newFacetFilters)
   }
 
   const [loading, setLoading] = useState(false)
   const [posts, setPosts] = useState()
+  const [facets, setFacets] = useState()
+
   useEffect(() => {
     const handler = async () => {
       setLoading(true)
-      const data = await getPosts(searchValue, facetFilters)
-      if (data) setPosts(data)
-      setPosts(data)
+      const data = await getPostsData(searchValue, facetFiltersMap)
+      if (data) {
+        setPosts(data.posts)
+        setFacets(data.facets)
+      }
       setLoading(false)
     }
     handler()
-  }, [searchValue, facetFilters])
+  }, [searchValue, facetFiltersMap])
 
   return (
     <main>
@@ -68,18 +64,19 @@ function App() {
       <div className="post-cards-grid">
         <section className="filters">
           <span className="filters-title">FILTERS</span>
-          {(!posts?.facets || !Object.entries(posts?.facets).length) && (
+          {!facets?.length && (
             <p className="state-message">{loading ? 'Fetching filters...' : 'No filters!'}</p>
           )}
-          {posts?.facets && (
+          {facets && (
             <ul className="facets">
-              {Object.entries(posts.facets).map(([key, value]) => {
+              {facets.map(({ key, options, title }) => {
                 return (
                   <li key={key}>
                     <Facet
                       facetFiltersMap={facetFiltersMap}
-                      facetFieldKey={key}
-                      facetFieldOptions={value}
+                      facetKey={key}
+                      options={options}
+                      title={title}
                       onChange={onFacetChange}
                     />
                   </li>
@@ -89,8 +86,8 @@ function App() {
           )}
         </section>
         <section className="posts">
-          {!posts?.hits?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
-          {!!posts?.hits?.length && posts.hits.map((hit) => <Post post={hit} key={hit.objectID} />)}
+          {!posts?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
+          {!!posts?.length && posts.map((post) => <Post post={post} key={post.objectID} />)}
         </section>
       </div>
     </main>
