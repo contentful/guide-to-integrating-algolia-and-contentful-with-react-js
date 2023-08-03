@@ -22,7 +22,7 @@ First of all, we'll need to create Algolia credentials and a search index.
 
 In your Algolia dashboard, create an application. Then, create an index. You can call it whatever you like. For the purpose of this tutorial, we'll be creating an index of blog posts.
 
-<img width="1906" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/5f9967d9-b8f1-48ab-b0fa-60beb9b5430f">
+![Algolia Dashboard Preview](/public/images/1-algolia-dashboard-preview.png)
 
 Now, you have to go to the `Settings` section (the cog icon at the bottom of the page) and you'll see your organization settings. Go to `Team and Access > API Keys` and copy your Application ID and your Admin API Key. We need writing access to the index as we'll be syncing data from Contentful to it.
 
@@ -43,11 +43,11 @@ This will create two webhooks. One for the entries indexing and the second one f
 
 The Index Entries webhook will look like this:
 
-<img width="1590" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/5522f3ed-bb27-487d-b409-80a49501afd6">
+![Contentful Webhook Base Config](/public/images/2-contentful-webhook-base-config.png)
 
 I'll add another filter rule to both webhooks which will make the indexing and deletion to only happen with the `post` content type. We normally don't want all of our entries to be indexed, just the ones we want to show in a listing-like page. We also don't want to trigger the deletion webhook whenever entries from another content type are unpublished.
 
-<img width="1552" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/b3df6333-6622-4365-a341-f27c948526cd">
+![Contentful Webhook Filters Config](/public/images/3-contentful-webhook-filters-config.png)
 
 Now let's create our `Post` content type and index an entry!
 
@@ -57,15 +57,15 @@ We'll keep it simple and will not include reference entry fields, but in a norma
 
 Our content type will have the following fields, being the `Title`, `Publish Date`, and `Authors` the minimal required information in order for the Post to be shown in our listing page:
 
-<img width="1030" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/be48557d-3853-4365-bb42-47d8aca230a4">
+![Content Type Fields](/public/images/4-content-type-fields.png)
 
 Now, whenever you publish a `post` entry, its data will be synced into the Algolia index! Let's take, for example, the following sample entry:
 
-<img width="1853" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/03a5c3d2-612b-40f8-a477-1115c5984c75">
+![Contentful Sample Entry](/public/images/5-contentful-sample-entry.png)
 
 As soon as we fill in all the fields and hit the publish button, our entry will be synced into Algolia and we'll be able to see the data in our index!
 
-<img width="1560" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/0f0d059c-f2ce-4817-9e8d-539ea1799331">
+![Algolia Sample Record](/public/images/6-algolia-sample-record.png)
 
 ## Building the React application
 
@@ -308,7 +308,7 @@ main {
 
 Now if you run the dev server with `npm run dev` and go to `http://localhost:5173`, you will see your post entries listed!
 
-<img width="1340" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/bbb0bcf0-83da-4c46-b11d-f563ed8fd84d">
+![Posts](/public/images/7-posts.png)
 
 ## Sending queries to the index and refining our results
 
@@ -316,9 +316,7 @@ Now that we're able to fetch our posts, a really nice feature that Algolia provi
 
 Go to your Algolia dashboard and then to your index settings in the `Configuration` tab. Then click on `Searchable attributes` and add `fields.title.en-US` and `fields.category.en-US`. With this we're telling Algolia to only search for matches within these 2 fields, improving the performance of the search. Don't forget to click on `Review and Save Settings` to save these changes!
 
-<img width="1607" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/9d624fd9-fa17-43f1-840f-c37e919de182">
-
-<img width="1607" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/9d624fd9-fa17-43f1-840f-c37e919de182">
+![Algolia Index Searchable Attributes Config](/public/images/8-index-searchable-attributes-settings.png)
 
 Now let's modify our `App` component, let's add a search input and some states:
 
@@ -377,7 +375,7 @@ Also add the styles for our input in the `App.css` file:
 
 Now we can type some query and update our results! We can search for words within the title of our posts or for categories. If I type `Developers`, the posts will be filtered and those with that category will show up.
 
-<img width="1377" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/2f940f22-1007-480e-bb87-1c6aa732384e">
+![Posts with search](/public/images/9-posts-with-search.png)
 
 ## Filtering posts
 
@@ -417,11 +415,11 @@ export const getPostsData = async (query = '', facetFiltersMap = []) => {
 
 If we print the result of our `posts` variable, we'll get something like this:
 
-<img width="540" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/cd1d2e5c-597c-406d-884c-f5ac443e4d72">
+![Post Hits Algolia response](/public/images/10-post-hits-algolia-response.png)
 
 as you can see, we're receiving an empty `facets` object. In order to configure them, go to your index settings in the `Configuration` tab, search for `Facets` and click on the `+ Add an Attribute` button to add the `fields.category.en-US` attribute, and save the changes.
 
-<img width="1612" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/2bafa7b8-87a3-40e8-96c8-5dfb70ab2cf4">
+![Algolia Facets Config](/public/images/11-algolia-facets-config.png)
 
 Now if we print the value of `posts.facets` again, we'll see the `fields.category.en-US` key with the respective amount of records each category value has. In my case, I had three `Developers` blog posts, one `Partners` post, one `Product` post and one `Strategy` post.
 
@@ -631,7 +629,7 @@ Last but not least, let's add this CSS to our `App.css` file:
 
 Here's the final result! We're now able to filter our results based on the Category field and also type a text query to search for matches in both the Title and Category fields.
 
-<img width="1256" alt="image" src="https://github.com/IgnacioNMiranda/guide-to-integrating-algolia-and-contentful-with-react-js/assets/38511917/bc38a1b1-3e5f-4671-9c31-f7c62554e09b">
+![Final App result](/public/images/12-final-result.png)
 
 ## Wrapping Up
 
