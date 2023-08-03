@@ -113,17 +113,19 @@ const ALGOLIA_INDEX = import.meta.env.VITE_ALGOLIA_INDEX
 const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_API_TOKEN)
 const index = client.initIndex(ALGOLIA_INDEX)
 
-export const getPosts = async (query = '') => {
+export const getPostsData = async (query = '') => {
   try {
     const data = await index.search(query)
-    return data
+    return {
+      posts: data.hits
+    }
   } catch (error) {
     return undefined
   }
 }
 ```
 
-With this we're retrieving our credentials, creating an algolia client and initializing the index, which will allow us to perform queries against it. The `getPosts` function will help us to retrieve our posts based on a string query.
+With this we're retrieving our credentials, creating an algolia client and initializing the index, which will allow us to perform queries against it. The `getPostsData` function will help us to retrieve our posts based on a string query.
 
 ## Fetching data from the index and showing it in the client
 
@@ -154,7 +156,7 @@ Also replace the boilerplate code in `./src/App.jsx` with the following:
 
 ```jsx
 import './App.css'
-import { getPosts } from './algolia-client'
+import { getPostsData } from './algolia-client'
 import { Post } from './Post'
 import { useState, useEffect } from 'react'
 
@@ -164,9 +166,8 @@ function App() {
   useEffect(() => {
     const handler = async () => {
       setLoading(true)
-      const data = await getPosts('')
-      if (data) setPosts(data)
-      setPosts(data)
+      const data = await getPostsData('')
+      if (data) setPosts(data.posts)
       setLoading(false)
     }
     handler()
@@ -176,8 +177,8 @@ function App() {
     <main>
       <h1 className="page-title">POSTS</h1>
       <section className="posts">
-        {!posts?.hits?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
-        {!!posts?.hits?.length && posts.hits.map((hit) => <Post post={hit} key={hit.objectID} />)}
+        {!posts?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
+        {!!posts?.length && posts.map((post) => <Post post={post} key={post.objectID} />)}
       </section>
     </main>
   )
@@ -333,9 +334,8 @@ function App() {
   useEffect(() => {
     const handler = async () => {
       setLoading(true)
-      const data = await getPosts(searchValue)
-      if (data) setPosts(data)
-      setPosts(data)
+      const data = await getPostsData(searchValue)
+      if (data) setPosts(data.posts)
       setLoading(false)
     }
     handler()
@@ -352,8 +352,8 @@ function App() {
         onChange={onSearchChange}
       />
       <section className="posts">
-        {!posts?.hits?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
-        {!!posts?.hits?.length && posts.hits.map((hit) => <Post post={hit} key={hit.objectID} />)}
+        {!posts?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
+        {!!posts?.length && posts.map((post) => <Post post={post} key={post.objectID} />)}
       </section>
     </main>
   )
@@ -383,10 +383,10 @@ Now we can type some query and update our results! We can search for words withi
 
 Let's dive into another great Algolia feature: filtering. We first need to understand the concept of [facets](https://www.algolia.com/doc/guides/managing-results/refine-results/faceting/). They basically allow us to add categorization to our search results using some of the attributes our data has. For example, we can define the `category` field of our blog posts as a facet in order to refine our searches using the category value our entries have.
 
-Let's modify our `getPosts` function a little bit:
+Let's modify our `getPostsData` function a little bit:
 
 ```js
-export const getPosts = async (query = '', facetFiltersMap) => {
+export const getPostsData = async (query = '', facetFiltersMap = []) => {
   const facetFilters = [...facetFiltersMap]
     .map(([key, val]) => {
       if (val.length) return `${key}:${val.join(',')}`
@@ -406,7 +406,7 @@ export const getPosts = async (query = '', facetFiltersMap) => {
     })
 
     return {
-      ...data,
+      posts: data.hits,
       facets: sanitizedFacets,
     }
   } catch (error) {
@@ -503,12 +503,16 @@ function App() {
 
   const [loading, setLoading] = useState(false)
   const [posts, setPosts] = useState()
+  const [facets, setFacets] = useState()
+
   useEffect(() => {
     const handler = async () => {
       setLoading(true)
-      const data = await getPosts(searchValue, facetFiltersMap)
-      if (data) setPosts(data)
-      setPosts(data)
+      const data = await getPostsData(searchValue, facetFiltersMap)
+      if (data) {
+        setPosts(data.posts)
+        setFacets(data.facets)
+      }
       setLoading(false)
     }
     handler()
@@ -528,12 +532,12 @@ function App() {
       <div className="post-cards-grid">
         <section className="filters">
           <span className="filters-title">FILTERS</span>
-          {(!posts?.facets || !Object.entries(posts?.facets).length) && (
+          {!facets?.length && (
             <p className="state-message">{loading ? 'Fetching filters...' : 'No filters!'}</p>
           )}
-          {posts?.facets && (
+          {facets && (
             <ul className="facets">
-              {posts.facets.map(({ key, options, title }) => {
+              {facets.map(({ key, options, title }) => {
                 return (
                   <li key={key}>
                     <Facet
@@ -550,8 +554,8 @@ function App() {
           )}
         </section>
         <section className="posts">
-          {!posts?.hits?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
-          {!!posts?.hits?.length && posts.hits.map((hit) => <Post post={hit} key={hit.objectID} />)}
+          {!posts?.length && <p className="state-message">{loading ? 'Fetching posts...' : 'No results!'}</p>}
+          {!!posts?.length && posts.map((post) => <Post post={post} key={post.objectID} />)}
         </section>
       </div>
     </main>
